@@ -1,0 +1,132 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+
+}
+
+<div class="jumbotron">
+    <h2><b>Library</b></h2>
+    <p class="lead">Table of books with their id, title, author and publisher</p>
+</div>
+<input type="text" id="filSearch" placeholder="Enter a character to search"/>
+<br>
+<br>
+ 
+<button type="button" onclick="btnClick(this)" value="0" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span> Search</button>
+<button type="button" class="btn btn-success"  onclick="window.location.href ='/Home/Edit?id=0';" style="position:relative; left:15px"><span class="glyphicon glyphicon-plus"></span> New</button>
+
+    <hr />
+
+    <table id="dataTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>Title</th>
+                <th>Publishers_name</th>
+                <th>Authors_name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        <tfoot>           
+        </tfoot>
+    </table>
+
+<nav aria-label="Page navigation">
+        <ul class="pagination" id="pagination">
+            
+
+              
+        </ul>
+</nav>
+
+
+@**Ajax call*@
+    <script>
+        var rows;
+
+        function btnClick(el) {
+
+            var page = (el).getAttribute("value");
+            var titleFilter = $("#filSearch").val();
+
+            if (page <= 0) {
+                page = 1;
+            }
+
+            $.ajax({
+                type: 'GET',
+                url: '/Home/Search?titleFilter=' + titleFilter + '&page=' + page,
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+
+                    //alert('Books fetched');
+
+                    $('#dataTable tbody').empty();
+
+                    rows = "";
+                    
+                    $.each(data.books, function (i, item) {
+
+                        rows += "<tr id=\"" + item.id + "\">"
+                            + "<td>" + item.id + "</td>"
+                            + "<td>" + item.title + "</td>"
+                            + "<td>" + item.publisher_name + "</td>"
+                            + "<td>" + item.authors_name + "</td>"
+                            + ("<td>" + "<a href=\"/Home/Edit?id={id}\" target=\"_blank\"><button id=\"editBtn\" class=\"btn btn-primary\" >Edit</button> </a>").replace("{id}", item.id)
+                            + ("<a href=#><button id=\"deltBtn\" onclick=\"deleteBtn({id})\" class=\"btn btn-danger\">Delete</button> </a>").replace("{id}", item.id)
+                            + "</td>"
+                            + "</tr>";
+                            
+                    })
+                    $('#dataTable tbody').append(rows);
+                    $('#pagination').empty();
+                    for (var i = 1; i <= Math.ceil(data.bookscount/10); i++) {
+                        $('#pagination').append("<li class=\"page-item\"><a class=\"page-link\" value=\" " + i + "\" href=\"#\" onclick=\"btnClick(this)\">" + i + "</a></li>")
+                    }  
+
+                },
+                error: function (error) {
+                    handleAjaxError(error);
+                    alert('error')
+                },
+                complete: function (data) {
+                    //alert('Completed');
+
+                }
+            });
+
+        }
+
+        function deleteBtn(id) {
+
+            $.ajax({
+                type: 'DELETE',
+                url: '/Home/Delete?id=' + id,
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+
+                    $('#' + id).empty();
+                    alert('Book deleted');
+
+                },
+                error: function (error) {
+                    handleAjaxError(error);
+                    alert('error')
+                },
+                complete: function (data) {
+                    //alert('Completed');
+                }
+            });
+
+        }
+    </script>
+
+    <div class="jumbotron">
+        <h1>ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    </div>
+

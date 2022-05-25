@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "Edit";
+} 
+
+@model WebApplication1.Models.EditBooksViewModel
+    
+    <h2>@ViewBag.Title.</h2>
+    <h3>Edit book page</h3>
+
+    <form action="/Home/EditSubmit" method="post" id="form">
+        <table>
+            <tr>
+                <td>
+                    <div class="input-group-mb-2" id="bookId">
+                        @Html.HiddenFor(Model => Model.book.id)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Enter Title:
+                    <div class="input-group-mb-2" id="bookTitle">
+                        @Html.TextBoxFor(Model => Model.book.title)
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Enter Description:
+                    <div class="input-group-mb-2" id="bookDescription">
+                        @Html.TextBoxFor(Model => Model.book.description)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="publishers" id="publisher">Publisher:</label>
+                    @Html.DropDownListFor(Model => Model.book.publisher_id, new SelectList(Model.publishers, "id", "publisher_name", Model.book.publisher_id), new { @id = "book.publisher_id", @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="authors" id="author">Author:</label>
+                    @Html.DropDownListFor(Model => Model.book.authors_id, new SelectList(Model.authors, "id", "authors_name", Model.book.authors_id), new { @id = "book.authors_id", @class = "form-control" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="category" id="category">Category:</label>
+                    @Html.DropDownListFor(Model => Model.book.categoriesIds, new MultiSelectList(Model.categories, "id", "category_name", Model.book.categoriesIds), new { @id = "book.categoriesIds", @class = "form-control", @multiple="multiple" })
+                    @*@Html.ListBoxFor(m => m.categoryIds, new MultiSelectList(Model.categories, "id", "category_name") as IEnumerable<SelectListItem>, null)*@
+                </td>
+            </tr>
+
+            @*<tr>
+                <td>
+                    <label for="category" id="category">Category:</label>
+                    <select class="form-control"  id="selectCategory" required multiple>
+                    <option disabled selected>Select categories</option>
+                    @foreach (var item in Model.categories)
+                        {
+                           <option value="@Url.Action("category_name", new { category_id = item.id })" @Model>@item.category_name</option>
+                        }
+                    </select>
+                </td>
+            </tr>*@
+        </table>
+       
+        <br />
+        <button type="submit" name="save" class="btn btn-primary">Save</button>
+        @*<button type="submit" name="back" style="position: relative; left: 8px" onclick="goBack();" class="btn btn-primary">Back</button>
+
+        <script>
+            function goBack()
+            {
+                window.stop();
+                //window.location = "http://localhost:54494/"
+                }
+        </script>*@
+        
+    </form>
+
+
+
+
+
